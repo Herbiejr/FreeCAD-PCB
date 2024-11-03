@@ -326,7 +326,7 @@ class KiCadv4_PCB(KiCadv3_PCB):
                 package3Data = []
                 for j in self.getFootprintMultiData(i, r"\(model"):
                     j = j.replace('"', '')
-                    path = re.search(r'\(model\s+(.*?)\n', j, re.DOTALL).groups()[0]
+                    [path, hideModel] = re.search(r'\(model\s+(.*?)(| hide)\n', j, re.DOTALL).groups()
                     
                     if len(path.split('\\')) == 1:
                         path = path.split('/')
@@ -340,6 +340,11 @@ class KiCadv4_PCB(KiCadv3_PCB):
                     [rotX, rotY, rotZ] = re.search(r'\(rotate\s+\(xyz\s+([-0-9\.]*?)\s+([-0-9\.]*?)\s+([-0-9\.]*?)\)\)', j).groups()
                     [scaleX, scaleY, scaleZ] = re.search(r'\(scale\s+\(xyz\s+([-0-9\.]*?)\s+([-0-9\.]*?)\s+([-0-9\.]*?)\)\)', j).groups()
                     #
+                    if hideModel.strip() == "":
+                        hideModel = False
+                    else:
+                        hideModel = True
+                    #
                     package3Data.append({
                         "kicad3dModelVar": kicad3dModelVar,
                         "kicad3dModelDir": os.path.splitext(kicad3dModelDir)[0],
@@ -347,12 +352,13 @@ class KiCadv4_PCB(KiCadv3_PCB):
                         "offsetX": float(offsetX),
                         "offsetY": float(offsetY) * -1,
                         "offsetZ": float(offsetZ),
-                        "rotX": float(rotX),
-                        "rotY": float(rotY),
+                        "rotX": float(rotX) * -1,
+                        "rotY": float(rotY) * -1,
                         "rotZ": float(rotZ) * -1,
                         "scaleX": float(scaleX),
                         "scaleY": float(scaleY),
                         "scaleZ": float(scaleZ),
+                        "hideModel": hideModel,
                     })
                 ####################################
                 ####################################
