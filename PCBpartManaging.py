@@ -238,7 +238,7 @@ class partsManaging(mathFunctions):
             'x': 0, 
             'y': 0, 
             'locked': False, 
-            'populated': False,  
+            'populate': False,  
             'smashed': False, 
             'rot': 0, 
             'side': 'TOP', 
@@ -287,7 +287,7 @@ class partsManaging(mathFunctions):
             # 'x': 19.0, 
             # 'y': 5.5, 
             # 'locked': False, 
-            # 'populated': False,  
+            # 'populate': False,  
             # 'smashed': False, 
             # 'rot': 90, 
             # 'side': 'TOP', 
@@ -334,15 +334,18 @@ class partsManaging(mathFunctions):
         ###############################################################
         # checking if 3D model exist
         ###############################################################
-        fileData = self.partExist(newPart)
-        '''
-        fileDAta = [
-            True, 
-            pathToFile, 
-            {'ry': 0.0, 'z': 0.02, 'x': 0.0, 'software': 'Eagle', 'modelID': 32, 'rz': 0.0, 'rx': 0.0, 'y': 0.02, 'name': 'R1206', 'id': 66}
-        ]
-        '''
-        
+        if "populate" in newPart.keys() and not newPart["populate"]:
+            fileData = [False, "", {}]
+        else:
+            fileData = self.partExist(newPart)
+            '''
+            fileDAta = [
+                True, 
+                pathToFile, 
+                {'ry': 0.0, 'z': 0.02, 'x': 0.0, 'software': 'Eagle', 'modelID': 32, 'rz': 0.0, 'rx': 0.0, 'y': 0.02, 'name': 'R1206', 'id': 66}
+            ]
+            '''
+        #
         if fileData[0]:
             if fileData[2]['modelID'] > 0:
                 modelData = self.__SQL__.getModelByID(fileData[2]['modelID'])
@@ -1011,6 +1014,9 @@ class partsManaging(mathFunctions):
             if databaseType == 'kicad_v4':
                 if self.wersjaFormatu.dialogMAIN.kicadModels.isChecked():
                     for i in newModelData["package3Data"]:
+                        if i["hideModel"]:
+                            continue
+                        #
                         x = i['offsetX']
                         y = i['offsetY']
                         z = i['offsetZ']
@@ -1020,14 +1026,14 @@ class partsManaging(mathFunctions):
                         # adjustModel - only for kicad_v4
                         
                         kicadPackageData = {
-                            'ry': ry, 
+                            'x': x,
+                            'y': y,
                             'z': z, 
-                            'x': x, 
+                            'rx': rx,
+                            'ry': ry, 
+                            'rz': rz, 
                             'software': 'KiCad', 
                             'modelID': -1, 
-                            'rz': rz, 
-                            'rx': rx, 
-                            'y': y, 
                             'name': newModelData['name'], 
                             'id': -1,
                             'adjustModel': True,
@@ -1173,7 +1179,7 @@ class modelTypes(QtGui.QDialog):
         self.connect(buttons, QtCore.SIGNAL("rejected()"), self, QtCore.SLOT("reject()"))
         #
         lay = QtGui.QGridLayout(self)
-        lay.addWidget(QtGui.QLabel(u"Choose one of available models for part"), 0, 0, 1, 1)
+        lay.addWidget(QtGui.QLabel(u"Choose one of available models for part:"), 0, 0, 1, 1)
         lay.addWidget(QtGui.QLabel(u"<div style='font-weight:bold;'>{0}</div>".format(modelName)), 1, 0, 1, 1, QtCore.Qt.AlignHCenter)
         lay.addWidget(self.modelsList, 2, 0, 1, 1)
         lay.addWidget(buttons, 2, 1, 1, 1)

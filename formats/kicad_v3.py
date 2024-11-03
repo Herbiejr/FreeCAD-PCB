@@ -777,6 +777,10 @@ class KiCadv3_PCB(baseModel):
             borderObject.addGeometry(Part.LineSegment(FreeCAD.Vector(i['x2'], i['y1'], 0), FreeCAD.Vector(i['x2'], i['y2'], 0)))
             borderObject.addGeometry(Part.LineSegment(FreeCAD.Vector(i['x2'], i['y2'], 0), FreeCAD.Vector(i['x1'], i['y2'], 0)))
             borderObject.addGeometry(Part.LineSegment(FreeCAD.Vector(i['x1'], i['y2'], 0), FreeCAD.Vector(i['x1'], i['y1'], 0)))
+        # polygon
+        for i in self.generatePolygonData(self.projektBRD, 'gr_poly', self.getLayerName(self.borderLayerNumber)):
+            for j in self.getPolygon(i["points"]):
+                borderObject.addGeometry(Part.LineSegment(FreeCAD.Vector(j[1], j[2], 0), FreeCAD.Vector(j[3], j[4], 0)))
         ############
         ############
         ###### get Edge.Cuts from objects

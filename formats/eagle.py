@@ -219,6 +219,11 @@ class EaglePCB(baseModel):
                 if 'M' in i.getAttribute('rot'):
                     side = 0
                 #
+                if i.hasAttribute("populate"):
+                    populate = self.translateBoolValue(i.getAttribute('populate'))
+                else:
+                    populate = True
+                #
                 self.elements.append({
                     'name': name, 
                     'library': i.getAttribute('library'), 
@@ -228,7 +233,7 @@ class EaglePCB(baseModel):
                     'x': float(i.getAttribute('x')), 
                     'y': float(i.getAttribute('y')), 
                     'locked': self.translateBoolValue(i.getAttribute('locked')),
-                    'populated': self.translateBoolValue(i.getAttribute('populate')), 
+                    'populate': populate, 
                     'smashed': self.translateBoolValue(i.getAttribute('smashed')), 
                     'rot': rot, 
                     'side': side,
@@ -662,7 +667,7 @@ class EaglePCB(baseModel):
                 # 'x': 19.0, 
                 # 'y': 5.5, 
                 # 'locked': '', 
-                # 'populated': '', 
+                # 'populate': '', 
                 # 'smashed': 'yes',
                 # 'rot': 90, 
                 # 'side': 'TOP', 
